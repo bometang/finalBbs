@@ -1,7 +1,7 @@
 package com.KDT.mosi;
 
-import com.KDT.mosi.domain.bbs.dao.BbsDAO;
-import com.KDT.mosi.domain.entity.Bbs;
+import com.KDT.mosi.domain.board.bbs.dao.BbsDAO;
+import com.KDT.mosi.domain.entity.board.Bbs;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

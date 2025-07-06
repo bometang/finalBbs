@@ -1,6 +1,6 @@
 package com.KDT.mosi.web;
 
-import com.KDT.mosi.domain.bbs.svc.BbsSVC;
+import com.KDT.mosi.domain.board.bbs.svc.BbsSVC;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

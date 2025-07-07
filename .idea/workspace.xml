@@ -5,9 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fc470a1-286f-4360-ab34-5292c3cb0de6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/jquery-3.7.1.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/postBoards/write.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/board/CsrBbsController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/KDT/mosi/web/controller/board/MemberAuto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/css/addStyles.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/img/default-profile.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/img/msi.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/static/js/bbs/csr/writeForm.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/footer.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/fragments/header.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/templates/postBoards/write_bak.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/templates/postBoards/write.html" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/templates/postBoards/write.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/templates/postBoards/write.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/templates/postBoards/write.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,6 +40,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="HTML File" />
         <option value="Thymeleaf" />
         <option value="Class" />
       </list>
@@ -47,12 +59,13 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.MosiApplication.executor": "Run",
+    "DefaultHtmlFileTemplate": "HTML File",
     "JUnit.MosiApplicationTests.testUpdateStepAndShift.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "main",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/study/project/finalBbs/src/main/resources/templates/csr",
+    "last_opened_file_path": "C:/KDT/projects/fiBbs/src/main/resources/static/img",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.0",
     "project.structure.side.proportion": "0.0",
@@ -61,18 +74,18 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\KDT\projects\fiBbs\src\main\resources\static\img" />
+      <recent name="C:\KDT\projects\fiBbs\src\main\resources\templates\postBoards" />
       <recent name="D:\study\project\finalBbs\src\main\resources\templates\csr" />
       <recent name="D:\study\project\finalBbs\src\main\resources\templates\postBoards" />
       <recent name="C:\KDT\projects\junmo\src\main\resources\static\js\bbs\csr" />
-      <recent name="C:\KDT\projects\junmo\src\main\java\com\KDT\mosi\domain\rbbsReport\svc" />
-      <recent name="C:\KDT\projects\junmo\src\main\java\com\KDT\mosi\domain\rbbsReport\dao" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\KDT\projects\fiBbs\src\main\resources\static\css" />
+      <recent name="C:\KDT\projects\fiBbs\src\main\resources\static\img" />
       <recent name="D:\study\project\finalBbs\src\main\resources\templates\csr\bbs" />
       <recent name="D:\study\project\finalBbs\src\main\resources\static\js" />
       <recent name="C:\KDT\projects\junmo\src\main\resources\static" />
-      <recent name="D:\study\project\junmo\sql\bbs" />
-      <recent name="C:\KDT\projects\junmo\sql" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
       <recent name="com.KDT.mosi.web" />

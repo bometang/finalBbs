@@ -34,10 +34,13 @@ public class ApiBbsController {
   //게시글 추가
   @PostMapping
   public ResponseEntity<ApiResponse<Bbs>> add(
-      @RequestBody @Valid SaveApi saveApi
+      @RequestBody @Valid SaveApi saveApi,
+      HttpSession session
   ) {
     log.info("saveApi={}", saveApi);
 
+    Long memberId = ((LoginMember) session.getAttribute("loginMember")).getMemberId();
+    saveApi.setMemberId(memberId);
     Bbs bbs = new Bbs();
     BeanUtils.copyProperties(saveApi, bbs);
 

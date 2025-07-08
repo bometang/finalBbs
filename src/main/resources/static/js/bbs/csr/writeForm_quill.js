@@ -1,36 +1,19 @@
 import { ajax } from '/js/common.js';
-
+const Quill = window.Quill;
 const parentIdAttr = document.body.dataset.parentId;
 const parentId     = parentIdAttr ? Number(parentIdAttr) : null;
 let parentCategory = null;
 
 
-
-
-document.addEventListener('DOMContentLoaded', async () => {
-  // 1) TinyMCE 초기화
-  await tinymce.init({
-    selector: '#editor',
-    height: 300,
-    plugins: [
-      'advlist autolink lists link image charmap preview anchor',
-      'searchreplace visualblocks code fullscreen',
-      'insertdatetime media table paste code help wordcount'
-    ],
-    toolbar: 'undo redo | formatselect | bold italic backcolor | \
-              alignleft aligncenter alignright alignjustify | \
-              bullist numlist outdent indent | removeformat | help | image',
-    images_upload_url: '/api/uploads/images',
-    automatic_uploads: true,
-    paste_data_images: true,
-    setup(editor) {
-      // 2) 폼 submit 시 내용 반영
-      const form = document.getElementById('write-form');
-      form.addEventListener('submit', e => {
-        tinymce.triggerSave();
-      });
+//Quill 에디터 초기화
+const quill = new Quill('#editor', {
+    theme: 'snow',
+    modules: {
+        toolbar: '#toolbar',
+        imageDrop:true,
+        imageResize: {}
     }
-  });
+});
 
 // 부모 게시글 카테고리 로드
 if (parentId) {
@@ -111,7 +94,7 @@ try {
       const loadRes = await ajax.get(loadUrl);
       if (loadRes.header.rtcd === 'S00') {
         frm.querySelector('[name="title"]').value      = loadRes.body.title;
-        tinymce.get('editor').setContent(loadRes.body.bcontent || '');
+        quill.root.innerHTML = loadRes.body.bcontent || '';
         // 드래프트 카테고리 선택
         categorySelect.value = loadRes.body.bcategory || '';
       }
@@ -128,8 +111,8 @@ try {
 
 // 등록 핸들러
 frm.addEventListener('submit', e => {
-  tinymce.triggerSave();
   e.preventDefault();
+  document.getElementById('editorContent').value = quill.root.innerHTML;
   const data = Object.fromEntries(new FormData(frm).entries());
   if (parentId) data.pbbsId = parentId;
   if (!data.title.trim())      return alert('제목은 필수입니다.');
@@ -142,7 +125,7 @@ frm.addEventListener('submit', e => {
 
 // 임시 저장 핸들러
 btnDraft.addEventListener('click', () => {
-  tinymce.triggerSave();
+  document.getElementById('editorContent').value = quill.root.innerHTML;
   const data = Object.fromEntries(new FormData(frm).entries());
   if (!data.title.trim() && !data.bcontent.trim()) {
     return alert('제목 또는 내용을 입력해야 임시 저장할 수 있습니다.');
@@ -162,5 +145,3 @@ btnDraft.addEventListener('click', () => {
         ? Array.from(this.files).map(f => f.name).join(', ')
         : '선택된 파일 없음';
     });
-
-});

@@ -1,7 +1,36 @@
 import { ajax } from '/js/common.js';
+
 const parentIdAttr = document.body.dataset.parentId;
 const parentId     = parentIdAttr ? Number(parentIdAttr) : null;
 let parentCategory = null;
+
+
+
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1) TinyMCE 초기화
+  await tinymce.init({
+    selector: '#editor',
+    height: 300,
+    plugins: [
+      'advlist autolink lists link image charmap preview anchor',
+      'searchreplace visualblocks code fullscreen',
+      'insertdatetime media table paste code help wordcount'
+    ],
+    toolbar: 'undo redo | formatselect | bold italic backcolor | \
+              alignleft aligncenter alignright alignjustify | \
+              bullist numlist outdent indent | removeformat | help | image',
+    images_upload_url: '/api/uploads/images',
+    automatic_uploads: true,
+    paste_data_images: true,
+    setup(editor) {
+      // 2) 폼 submit 시 내용 반영
+      const form = document.getElementById('write-form');
+      form.addEventListener('submit', e => {
+        tinymce.triggerSave();
+      });
+    }
+  });
 
 // 부모 게시글 카테고리 로드
 if (parentId) {
@@ -42,8 +71,9 @@ async function saveDraft(data) {
 // 폼 요소 참조
 const wrap           = document.querySelector('.content-area');
 const frm            = wrap.querySelector('#write-form');
-const categorySelect = wrap.querySelector('#category');
+const categorySelect = wrap.querySelector('#bcategory');
 const btnDraft       = wrap.querySelector('#temp-save-btn');
+
 
 // 카테고리 로드
 try {
@@ -81,7 +111,7 @@ try {
       const loadRes = await ajax.get(loadUrl);
       if (loadRes.header.rtcd === 'S00') {
         frm.querySelector('[name="title"]').value      = loadRes.body.title;
-        frm.querySelector('[name="bcontent"]').value    = loadRes.body.bcontent;
+        tinymce.get('editor').setContent(loadRes.body.bcontent || '');
         // 드래프트 카테고리 선택
         categorySelect.value = loadRes.body.bcategory || '';
       }
@@ -96,32 +126,23 @@ try {
   console.error('임시저장 확인 실패', e);
 }
 
+// 등록 핸들러
+frm.addEventListener('submit', e => {
+  tinymce.triggerSave();
+  e.preventDefault();
+  const data = Object.fromEntries(new FormData(frm).entries());
+  if (parentId) data.pbbsId = parentId;
+  if (!data.title.trim())      return alert('제목은 필수입니다.');
+  if (!parentId && (!data.bcategory || !data.bcategory.trim())) {
+    return alert('카테고리를 선택하세요.');
+  }
+  if (!data.bcontent.trim())   return alert('내용은 필수입니다.');
+  addBbs(data);
+});
 
-
-
-
-
-
-
-
-
-  // 1) Quill 에디터 초기화
-  const quill = new Quill('#editor', {
-    theme: 'snow',
-    modules: { toolbar: '#toolbar' }
-  });
-
-  // 2) 폼 제출 시 에디터 내용을 숨은 input에 넣기
-  const writeForm = document.getElementById('write-form');
-  const editorContentInput = document.getElementById('editorContent');
-  writeForm.addEventListener('submit', function() {
-    editorContentInput.value = quill.root.innerHTML;
-    // 주의: 여기서는 preventDefault() 하지 않아야 실제 제출이 됩니다.
-  });
-
-  // 3) 임시저장 버튼 핸들러
-  document.getElementById('temp-save-btn')
-    .addEventListener('click', () => {
+// 임시 저장 핸들러
+btnDraft.addEventListener('click', () => {
+  tinymce.triggerSave();
   const data = Object.fromEntries(new FormData(frm).entries());
   if (!data.title.trim() && !data.bcontent.trim()) {
     return alert('제목 또는 내용을 입력해야 임시 저장할 수 있습니다.');
@@ -129,6 +150,9 @@ try {
   if (parentId) data.pbbsId = parentId;
   saveDraft(data);
 });
+
+
+
 
   // 4) 파일 선택시 파일명 표시
   document.getElementById('file-input')
@@ -139,3 +163,4 @@ try {
         : '선택된 파일 없음';
     });
 
+});

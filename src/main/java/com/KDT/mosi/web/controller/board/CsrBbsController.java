@@ -38,14 +38,14 @@ public class CsrBbsController {
       ,Model model) {
     LoginMember loginMember = (LoginMember) session.getAttribute("loginMember");
     model.addAttribute("user", loginMember);
-    return "postBoards/write";
+    return "postBoards/write_quill";
   }
 
   // 게시글 답글
   @GetMapping("/add/{id}")
   public String updateForm(@PathVariable("id") Long id, Model model) {
     model.addAttribute("bbsId", id);
-    return "postBoards/write";
+    return "postBoards/write_quill";
   }
 
 }

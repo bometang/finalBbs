@@ -1,7 +1,7 @@
 --테이블 삭제
 DROP TABLE rbbs_like;
 DROP TABLE rbbs_report;
-DROP TABLE bbs_image;
+DROP TABLE bbs_upload;
 drop table rbbs;
 drop table bbs_like;
 DROP TABLE bbs_report;
@@ -18,7 +18,7 @@ DROP SEQUENCE member_member_id_seq;
 --DROP SEQUENCE terms_seq;
 --시퀀스삭제
 drop sequence bbs_bbs_id_seq;
-DROP SEQUENCE bbs_image_bbs_image_id_seq;
+DROP SEQUENCE bbs_upload_upload_id_seq;
 DROP SEQUENCE rbbs_rbbs_id_seq;
 
  -- MEMBER 테이블
@@ -284,8 +284,8 @@ REFERENCES member(member_id);
 --------------------------------------------------------
 -- 게시글 사진 테이블 생성
 --------------------------------------------------------
-CREATE TABLE bbs_image (
-  image_id    NUMBER(10)       PRIMARY KEY,
+CREATE TABLE bbs_upload (
+  upload_id    NUMBER(10)       PRIMARY KEY,
   bbs_id      NUMBER(10)       NOT NULL,
   sort_order  NUMBER(5)        NOT NULL,      -- 본문 내 삽입 순서
   file_path   VARCHAR2(2000)   NOT NULL,
@@ -296,5 +296,5 @@ CREATE TABLE bbs_image (
 );
 
 -- 시퀀스 생성
-CREATE SEQUENCE bbs_image_bbs_image_id_seq;
+CREATE SEQUENCE bbs_upload_upload_id_seq;
 

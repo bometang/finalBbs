@@ -287,6 +287,7 @@ REFERENCES member(member_id);
 CREATE TABLE bbs_upload (
   upload_id    NUMBER(10)       PRIMARY KEY,
   bbs_id      NUMBER(10)       NOT NULL,
+  file_type VARCHAR2(20) DEFAULT 'INLINE',
   sort_order  NUMBER(5)        NOT NULL,      -- 본문 내 삽입 순서
   file_path   VARCHAR2(2000)   NOT NULL,
   original_name VARCHAR2(255),

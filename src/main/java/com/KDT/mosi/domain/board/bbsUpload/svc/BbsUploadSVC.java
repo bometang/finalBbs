@@ -1,18 +1,18 @@
-package com.KDT.mosi.domain.board.bbsUpload.dao;
+package com.KDT.mosi.domain.board.bbsUpload.svc;
 
 import com.KDT.mosi.domain.entity.board.BbsUpload;
 import com.KDT.mosi.domain.entity.board.UploadResult;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface BbsUploadDAO {
-
-  /** 단일 메타 저장 (image_id 리턴) */
-  Long save(BbsUpload upload);
+public interface BbsUploadSVC {
+  /** 단일 메타 저장 (upload_id 리턴) */
+  Long save(BbsUpload upload,MultipartFile file);
 
   /** 여러 건 메타 저장 → id/url 묶음 리턴 */
-  List<UploadResult> saveAll(List<BbsUpload> uploads);
+  List<UploadResult> saveAll(Long bbsId,String fileType,List<MultipartFile> files);
 
   /** 특정 게시글의 INLINE 이미지만 sort_order 순으로 조회 */
   List<BbsUpload> findInlineByBbsIdOrderBySort(Long bbsId);
@@ -24,13 +24,13 @@ public interface BbsUploadDAO {
   int getMaxSortOrder(Long bbsId, String fileType);
 
   /** 개별 이미지/파일 삭제 */
-  int deleteById(Long imageId);
+  void deleteById(Long uploadId);
 
   /** 게시글 전체 이미지·파일 일괄 삭제 */
   int deleteByBbsId(Long bbsId);
 
   /** image_id에 대응하는 sort_order 업데이트 */
-  int updateSortOrder(Long imageId, int sortOrder);
+  int updateSortOrder(Long uploadId, int sortOrder);
 
   // 삭제시 순서 조정
   int decrementSortOrders(Long bbsId, String fileType, int fromOrder);

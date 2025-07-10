@@ -1,7 +1,6 @@
 package com.KDT.mosi.domain.board.bbsUpload.dao;
 
 import com.KDT.mosi.domain.entity.board.BbsUpload;
-import com.KDT.mosi.domain.entity.board.UploadResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,11 +22,12 @@ import java.util.Optional;
 public class BbsUploadDAOImpl implements BbsUploadDAO{
   final private NamedParameterJdbcTemplate template;
 
+  // 초기 저장
   @Override
   public Long save(BbsUpload upload) {
     StringBuffer sql = new StringBuffer();
-    sql.append("INSERT INTO bbs_upload(upload_id,bbs_id,file_type,sort_order,file_path,original_name,saved_name) ");
-    sql.append("VALUES (bbs_upload_upload_id_seq.NEXTVAL, :bbsId, :fileType, :sortOrder, :filePath, :originalName, :savedName) ");
+    sql.append("INSERT INTO bbs_upload(upload_id,bbs_id,upload_group,file_type,sort_order,file_path,original_name,saved_name) ");
+    sql.append("VALUES (bbs_upload_upload_id_seq.NEXTVAL, null,:uploadGroup, :fileType, :sortOrder, :filePath, :originalName, :savedName) ");
 
     SqlParameterSource param = new BeanPropertySqlParameterSource(upload);
     KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -38,17 +37,25 @@ public class BbsUploadDAOImpl implements BbsUploadDAO{
     return key.longValue();
   }
 
-  @Override
-  public List<UploadResult> saveAll(List<BbsUpload> uploads) {
-    List<UploadResult> uploadResults = new ArrayList<>();
-    Long id;
-    for (BbsUpload upload : uploads) {
-      id = save(upload);
-      uploadResults.add(new UploadResult(id, upload.getFilePath()));
-    }
-    return uploadResults;
-  }
+//  // 초기 다중 저장
+//  @Override
+//  public List<UploadResult> saveAll(List<BbsUpload> uploads) {
+//    StringBuffer sql = new StringBuffer();
+//    sql.append("SELECT bbs_upload_upload_group_seq.NEXTVAL FROM DUAL ");
+//    SqlParameterSource param = new MapSqlParameterSource();
+//    Long i = template.queryForObject(sql.toString(), param, Long.class);
+//
+//    Long uploadId;
+//    List<UploadResult> uploadResults = new ArrayList<>(uploads.size());
+//    for (BbsUpload upload : uploads) {
+//      upload.setUploadGroup(i);
+//      uploadId = save(upload);
+//      uploadResults.add(new UploadResult(uploadId, upload.getFilePath()));
+//    }
+//    return uploadResults;
+//  }
 
+  // 글에 upload한 파일 가져오기
   @Override
   public List<BbsUpload> findInlineByBbsIdOrderBySort(Long bbsId) {
     StringBuffer sql = new StringBuffer();
@@ -63,6 +70,7 @@ public class BbsUploadDAOImpl implements BbsUploadDAO{
     return list;
   }
 
+  // 파일 업로드 버튼으로 upload한 파일 가져오기
   @Override
   public List<BbsUpload> findAttachmentsByBbsIdOrderBySort(Long bbsId) {
     StringBuffer sql = new StringBuffer();
@@ -77,13 +85,14 @@ public class BbsUploadDAOImpl implements BbsUploadDAO{
     return list;
   }
 
+  //현재 가장 큰 업로드한 값 가져오기
   @Override
-  public int getMaxSortOrder(Long bbsId, String fileType) {
+  public int getMaxSortOrder(Long uploadGroup, String fileType) {
     StringBuffer sql = new StringBuffer();
-    sql.append("SELECT COALESCE(MAX(sort_order), -1) FROM bbs_upload where file_type = :fileType AND bbs_id = :bbsId ");
+    sql.append("SELECT COALESCE(MAX(sort_order), -1) FROM bbs_upload where upload_group = :uploadGroup AND file_type = :fileType ");
 
     SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("bbsId", bbsId)
+        .addValue("uploadGroup", uploadGroup)
         .addValue("fileType",fileType);
 
     int i = template.queryForObject(sql.toString(),param, Integer.class);
@@ -132,16 +141,16 @@ public class BbsUploadDAOImpl implements BbsUploadDAO{
   }
 
   @Override
-  public int decrementSortOrders(Long bbsId, String fileType, int fromOrder) {
+  public int decrementSortOrders(Long uploadGroup, String fileType, int fromOrder) {
     StringBuffer sql = new StringBuffer();
     sql.append("UPDATE bbs_upload ");
     sql.append("SET sort_order = sort_order - 1 ");
-    sql.append("WHERE bbs_id    = :bbsId ");
+    sql.append("WHERE upload_group    = :uploadGroup ");
     sql.append("AND file_type = :fileType ");
     sql.append("AND sort_order > :fromOrder ");
 
     SqlParameterSource param = new MapSqlParameterSource()
-        .addValue("bbsId",bbsId)
+        .addValue("uploadGroup",uploadGroup)
         .addValue("fileType",fileType)
         .addValue("fromOrder",fromOrder);
 
@@ -165,4 +174,31 @@ public class BbsUploadDAOImpl implements BbsUploadDAO{
 
     return Optional.of(bbsUpload);
   }
+
+  @Override
+  public int bindGroupToBbs(Long bbsId, Long uploadGroup) {
+    StringBuffer sql = new StringBuffer();
+    sql.append("UPDATE bbs_upload ");
+    sql.append("SET bbs_id = :bbsId ");
+    sql.append("WHERE upload_group    = :uploadGroup ");
+
+    SqlParameterSource param = new MapSqlParameterSource()
+        .addValue("bbsId",bbsId)
+        .addValue("uploadGroup",uploadGroup);
+
+    int rows = template.update(sql.toString(), param);
+
+    return rows;
+  }
+
+  @Override
+  public Long createUploadGroup() {
+    StringBuffer sql = new StringBuffer();
+    sql.append("SELECT bbs_upload_upload_group_seq.NEXTVAL FROM DUAL ");
+    SqlParameterSource param = new MapSqlParameterSource();
+    Long i = template.queryForObject(sql.toString(), param, Long.class);
+
+    return i;
+  }
+
 }

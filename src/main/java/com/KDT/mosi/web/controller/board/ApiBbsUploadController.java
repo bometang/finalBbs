@@ -9,13 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 
 @RestController
-@RequestMapping("/api/bbs/{bbsId}")
+@RequestMapping("/api/bbs/upload")
 @RequiredArgsConstructor
 public class ApiBbsUploadController {
   private final BbsUploadSVC bbsUploadSVC;
@@ -23,11 +22,11 @@ public class ApiBbsUploadController {
   /**
    * 본문 INLINED 이미지 목록 조회
    */
-  @GetMapping("/images")
-  public ResponseEntity<List<UploadResult>> getInlineImages(@PathVariable Long bbsId) {
+  @GetMapping("/{bbsId}/images")
+  public ResponseEntity<List<UploadResult>> getInlineImages(@PathVariable("bbsId") Long bbsId) {
     List<UploadResult> images = bbsUploadSVC.findInlineByBbsIdOrderBySort(bbsId)
         .stream()
-        .map(u -> new UploadResult(u.getUploadId(), u.getFilePath()))
+        .map(u -> new UploadResult(u.getUploadId(), u.getFilePath(),u.getUploadGroup()))
         .toList();
     return ResponseEntity.ok(images);
   }
@@ -35,11 +34,11 @@ public class ApiBbsUploadController {
   /**
    * 첨부파일 목록 조회
    */
-  @GetMapping("/attachments")
-  public ResponseEntity<List<UploadResult>> getAttachments(@PathVariable Long bbsId) {
+  @GetMapping("/{bbsId}/attachments")
+  public ResponseEntity<List<UploadResult>> getAttachments(@PathVariable("bbsId") Long bbsId) {
     List<UploadResult> attachments = bbsUploadSVC.findAttachmentsByBbsIdOrderBySort(bbsId)
         .stream()
-        .map(u -> new UploadResult(u.getUploadId(), u.getFilePath()))
+        .map(u -> new UploadResult(u.getUploadId(), u.getFilePath(),u.getUploadGroup()))
         .toList();
     return ResponseEntity.ok(attachments);
   }
@@ -47,12 +46,16 @@ public class ApiBbsUploadController {
   /**
    * 본문 이미지 업로드
    */
-  @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  @PostMapping(
+      value = "/images",
+      consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+  )
   public ResponseEntity<List<UploadResult>> uploadInline(
-      @PathVariable Long bbsId,
+      @RequestParam(value="uploadGroup", required=false) Long uploadGroup,
       @RequestParam("files") List<MultipartFile> files
-  ) throws IOException {
-    List<UploadResult> results = bbsUploadSVC.saveAll(bbsId, "INLINE", files);
+  ) {
+    if (files == null || files.isEmpty()) return ResponseEntity.badRequest().build();
+    List<UploadResult> results = bbsUploadSVC.saveAll(uploadGroup, "INLINE", files);
     return ResponseEntity.status(HttpStatus.CREATED).body(results);
   }
 
@@ -61,20 +64,20 @@ public class ApiBbsUploadController {
    */
   @PostMapping(value = "/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   public ResponseEntity<List<UploadResult>> uploadAttachments(
-      @PathVariable Long bbsId,
+      @RequestParam(value="uploadGroup", required=false) Long uploadGroup,
       @RequestParam("files") List<MultipartFile> files
-  ) throws IOException {
-    List<UploadResult> results = bbsUploadSVC.saveAll(bbsId, "ATTACHMENT", files);
+  ) {
+    if (files == null || files.isEmpty()) return ResponseEntity.badRequest().build();
+    List<UploadResult> results = bbsUploadSVC.saveAll(uploadGroup, "ATTACHMENT", files);
     return ResponseEntity.status(HttpStatus.CREATED).body(results);
   }
 
   /**
    * 개별 업로드 아이템 삭제
    */
-  @DeleteMapping("/uploads/{uploadId}")
+  @DeleteMapping("/del/{uploadId}")
   public ResponseEntity<Void> deleteUpload(
-      @PathVariable Long bbsId,
-      @PathVariable Long uploadId
+      @PathVariable("uploadId") Long uploadId
   ) {
     bbsUploadSVC.deleteById(uploadId);
     return ResponseEntity.noContent().build();
@@ -83,8 +86,8 @@ public class ApiBbsUploadController {
   /**
    * 게시글의 모든 업로드 삭제
    */
-  @DeleteMapping("/uploads")
-  public ResponseEntity<Void> deleteAllUploads(@PathVariable Long bbsId) {
+  @DeleteMapping("/del/all/{bbsId}")
+  public ResponseEntity<Void> deleteAllUploads(@PathVariable("bbsId") Long bbsId) {
     bbsUploadSVC.deleteByBbsId(bbsId);
     return ResponseEntity.noContent().build();
   }
@@ -93,9 +96,8 @@ public class ApiBbsUploadController {
    * 업로드 순서 재정렬
    * 요청 바디: [{ "uploadId":1, "sortOrder":0 }, ...]
    */
-  @PutMapping("/uploads/order")
+  @PutMapping("/order")
   public ResponseEntity<Void> reorderUploads(
-      @PathVariable Long bbsId,
       @RequestBody List<Map<String, Integer>> orders
   ) {
     orders.forEach(item -> {

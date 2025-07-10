@@ -1,7 +1,6 @@
 package com.KDT.mosi.domain.board.bbsUpload.dao;
 
 import com.KDT.mosi.domain.entity.board.BbsUpload;
-import com.KDT.mosi.domain.entity.board.UploadResult;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,9 +9,9 @@ public interface BbsUploadDAO {
 
   /** 단일 메타 저장 (image_id 리턴) */
   Long save(BbsUpload upload);
-
-  /** 여러 건 메타 저장 → id/url 묶음 리턴 */
-  List<UploadResult> saveAll(List<BbsUpload> uploads);
+//
+//  /** 여러 건 메타 저장 → id/url 묶음 리턴 */
+//  List<UploadResult> saveAll(List<BbsUpload> uploads);
 
   /** 특정 게시글의 INLINE 이미지만 sort_order 순으로 조회 */
   List<BbsUpload> findInlineByBbsIdOrderBySort(Long bbsId);
@@ -37,4 +36,10 @@ public interface BbsUploadDAO {
 
   // 업로드 찾기
   Optional<BbsUpload> findById(Long uploadId);
+
+  // 게시글 저장시 bbsId 업데이트
+  int bindGroupToBbs(Long bbsId, Long uploadGroup);
+
+  // 업로드 파일 임시 그룹id 발급
+  Long createUploadGroup();
 }

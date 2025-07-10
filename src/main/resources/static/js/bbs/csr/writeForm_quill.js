@@ -3,7 +3,9 @@ const Quill = window.Quill;
 const parentIdAttr = document.body.dataset.parentId;
 const parentId     = parentIdAttr ? Number(parentIdAttr) : null;
 let parentCategory = null;
-
+const fileInput        = document.getElementById('file-input');
+const fileNameDisplay  = document.getElementById('file-name-display');
+const uploadGroupInput = document.getElementById('upload-group');
 
 //Quill 에디터 초기화
 const quill = new Quill('#editor', {
@@ -137,11 +139,36 @@ btnDraft.addEventListener('click', () => {
 
 
 
-  // 4) 파일 선택시 파일명 표시
-  document.getElementById('file-input')
-    .addEventListener('change', function() {
-      const display = document.getElementById('file-name-display');
-      display.textContent = this.files.length
-        ? Array.from(this.files).map(f => f.name).join(', ')
-        : '선택된 파일 없음';
-    });
+fileInput.addEventListener('change', async () => {
+  if (fileInput.files.length === 0) {
+    fileNameDisplay.textContent = '선택된 파일 없음';
+    uploadGroupInput.value = '';
+    return;
+  }
+
+  fileNameDisplay.textContent =
+    Array.from(fileInput.files).map(f => f.name).join(', ');
+
+  // FormData 구성
+  const fd = new FormData();
+  if (uploadGroupInput.value) fd.append('uploadGroup', uploadGroupInput.value);
+  Array.from(fileInput.files).forEach(f => fd.append('files', f));
+
+  try {
+    const res = await ajax.post(
+      '/api/bbs/upload/attachments',
+      fd,
+      { headers: { 'Content-Type': 'multipart/form-data' } } // ← axios처럼 옵션 전달
+    );
+
+    if (res.header.rtcd !== 'S00' || !Array.isArray(res.body) || res.body.length === 0) {
+      throw new Error(res.header.rtmsg || '빈 응답');
+    }
+
+    uploadGroupInput.value = res.body[0].uploadGroup;
+    alert(`${res.body.length}개 파일이 업로드되었습니다.`);
+  } catch (err) {
+    console.error(err);
+    alert('파일 업로드 실패');
+  }
+});

@@ -6,6 +6,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class UploadResult {
-  private Long id;
+  private Long uploadId;
   private String url;
+  private Long uploadGroup;
 }

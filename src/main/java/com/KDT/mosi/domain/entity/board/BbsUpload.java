@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 public class BbsUpload {
   private Long uploadId;
   private Long bbsId;          // FK
+  private Long uploadGroup;
   private String fileType;
   private int  sortOrder;
   private String filePath;     // 접근 URL 또는 저장 경로

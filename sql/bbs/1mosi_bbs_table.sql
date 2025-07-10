@@ -20,6 +20,7 @@ DROP SEQUENCE member_member_id_seq;
 drop sequence bbs_bbs_id_seq;
 DROP SEQUENCE bbs_upload_upload_id_seq;
 DROP SEQUENCE rbbs_rbbs_id_seq;
+DROP SEQUENCE bbs_upload_upload_group_seq;
 
  -- MEMBER 테이블
 CREATE TABLE member (
@@ -286,16 +287,23 @@ REFERENCES member(member_id);
 --------------------------------------------------------
 CREATE TABLE bbs_upload (
   upload_id    NUMBER(10)       PRIMARY KEY,
-  bbs_id      NUMBER(10)       NOT NULL,
+  bbs_id      NUMBER(10),
+  upload_group NUMBER(10),
   file_type VARCHAR2(20) DEFAULT 'INLINE',
   sort_order  NUMBER(5)        NOT NULL,      -- 본문 내 삽입 순서
   file_path   VARCHAR2(2000)   NOT NULL,
   original_name VARCHAR2(255),
   saved_name    VARCHAR2(255),
   uploaded_at TIMESTAMP        DEFAULT SYSTIMESTAMP,
-  FOREIGN KEY (bbs_id) REFERENCES bbs(bbs_id)
 );
+
+ALTER TABLE bbs_upload
+  ADD CONSTRAINT fk_bbs_upload_bbs
+    FOREIGN KEY (bbs_id)
+    REFERENCES bbs(bbs_id)
+    ON DELETE SET NULL;
 
 -- 시퀀스 생성
 CREATE SEQUENCE bbs_upload_upload_id_seq;
+CREATE SEQUENCE bbs_upload_upload_group_seq;
 

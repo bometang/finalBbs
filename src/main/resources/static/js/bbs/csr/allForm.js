@@ -33,7 +33,7 @@ $controls.appendChild($createBtn);
 // 로그인 사용자 정보 가져오기
 async function fetchCurrentUser() {
   try {
-    const res = await ajax.get('/api/auth/user');
+    const res = await ajax.get('/login/auth/user');
     if (res.header.rtcd === 'S00' && res.body) {
       const user = res.body;
       $userInfo.textContent = `${user.nickname || user.memberId}님 환영합니다.`;

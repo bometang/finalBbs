@@ -1,6 +1,6 @@
 package com.KDT.mosi.web.controller.board;
 
-import com.KDT.mosi.web.form.login.LoginMember;
+import com.KDT.mosi.domain.entity.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -19,9 +19,11 @@ public class MemberAuto {
       Model model
   ) {
     // 예시로 Member 엔티티를 직접 new 하지 않고, LoginMember DTO에 id만 담음
-    LoginMember loginMember = new LoginMember(1L,"a","minjun");
+    Member loginMember = new Member(1L,"minjun","a","a",null,null);
     // 세션에 저장
     session.setAttribute("loginMember", loginMember);
+    session.setAttribute("loginMemberId", 1L);
+
     return "redirect:/";
   }
 }

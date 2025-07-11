@@ -71,7 +71,7 @@ import { ajax } from '/js/common.js';
 
     // 3) 로그인 사용자 정보 로드
     try {
-      const resUser = await ajax.get('/api/auth/user');
+      const resUser = await ajax.get('/login/auth/user');
       if (resUser.header.rtcd === 'S00' && resUser.body) {
         memberInput.value = resUser.body.memberId;
       } else {

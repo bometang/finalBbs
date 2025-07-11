@@ -1,9 +1,9 @@
 package com.KDT.mosi.web.controller.board;
 
 import com.KDT.mosi.domain.board.bbsLike.svc.BbsLikeSVC;
+import com.KDT.mosi.domain.entity.Member;
 import com.KDT.mosi.web.api.ApiResponse;
 import com.KDT.mosi.web.api.ApiResponseCode;
-import com.KDT.mosi.web.form.login.LoginMember;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,12 +29,13 @@ public class ApiBbsLikeController {
       @PathVariable("bbsId") Long bbsId,
       HttpSession session
   ) {
-    LoginMember loginMember = (LoginMember) session.getAttribute("loginMember");
+    Long loginMemberId = (Long) session.getAttribute("loginMemberId");
+    Member loginMember = (Member) session.getAttribute("loginMember");
     if (loginMember == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "로그인이 필요합니다.");
     }
 
-    String result = bbsLikeSVC.toggleLike(loginMember.getMemberId(), bbsId);
+    String result = bbsLikeSVC.toggleLike(loginMemberId, bbsId);
     // "CREATED" 또는 "DELETED" 반환
     return ResponseEntity.ok(ApiResponse.of(ApiResponseCode.SUCCESS, result));
   }

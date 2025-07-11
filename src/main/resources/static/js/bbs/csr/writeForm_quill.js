@@ -140,35 +140,40 @@ btnDraft.addEventListener('click', () => {
 
 
 fileInput.addEventListener('change', async () => {
+  // 1) 선택된 파일이 없으면 초기화
   if (fileInput.files.length === 0) {
     fileNameDisplay.textContent = '선택된 파일 없음';
-    uploadGroupInput.value = '';
+    uploadGroupInput.value      = '';
     return;
   }
 
+  // 2) 파일명 UI에 표시
   fileNameDisplay.textContent =
     Array.from(fileInput.files).map(f => f.name).join(', ');
 
-  // FormData 구성
+  // 3) FormData 구성
   const fd = new FormData();
   if (uploadGroupInput.value) fd.append('uploadGroup', uploadGroupInput.value);
   Array.from(fileInput.files).forEach(f => fd.append('files', f));
 
   try {
-    const res = await ajax.post(
-      '/api/bbs/upload/attachments',
-      fd,
-      { headers: { 'Content-Type': 'multipart/form-data' } } // ← axios처럼 옵션 전달
-    );
+    // 4) 업로드 요청 (헤더 생략!)
+    const res = await ajax.post('/api/bbs/upload/attachments', fd);
 
-    if (res.header.rtcd !== 'S00' || !Array.isArray(res.body) || res.body.length === 0) {
+    // 5) 결과 처리
+    if (res.header.rtcd !== 'S00' ||
+        !Array.isArray(res.body)  ||
+        res.body.length === 0) {
+      // 서버 응답 형식은 있었지만 실패 케이스
       throw new Error(res.header.rtmsg || '빈 응답');
     }
 
+    // 업로드 성공 → 그룹 번호 및 안내
     uploadGroupInput.value = res.body[0].uploadGroup;
     alert(`${res.body.length}개 파일이 업로드되었습니다.`);
-  } catch (err) {
-    console.error(err);
+  } catch (e) {
+    // 네트워크 오류나 위 throw 모두 여기서 처리
+    console.error(e);
     alert('파일 업로드 실패');
   }
 });

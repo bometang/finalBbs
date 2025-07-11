@@ -72,6 +72,25 @@ public class ApiBbsUploadController {
     return ResponseEntity.status(HttpStatus.CREATED).body(results);
   }
 
+//  @PostMapping(value = "/attachments", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//  public ResponseEntity<ApiResponse<List<UploadResult>>> uploadAttachments(
+//      @RequestParam(value = "uploadGroup", required = false) Long uploadGroup,
+//      @RequestParam("files") List<MultipartFile> files) {
+//
+//    if (files == null || files.isEmpty()) {
+//      return ResponseEntity.badRequest()
+//          .body(ApiResponse.of(ApiResponseCode.BAD_REQUEST, null));
+//    }
+//
+//    List<UploadResult> results =
+//        bbsUploadSVC.saveAll(uploadGroup, "ATTACHMENT", files);
+//
+//    return ResponseEntity.status(HttpStatus.CREATED)
+//        .body(ApiResponse.of(ApiResponseCode.SUCCESS, results));
+//  }
+
+
+
   /**
    * 개별 업로드 아이템 삭제
    */

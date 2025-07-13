@@ -4,10 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title th:text="|MO:SI 커뮤니티 게시글 작성|">MO:SI 커뮤니티 게시글 작성</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/addStyles.css}">
-
+    <style>
+        .file-list {
+          display: inline-block;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .file-list li {
+          display: inline;
+          margin-left: 8px;
+        }
+    </style>
 </head>
 <body th:attr="data-parent-id=${bbsId}">
 <div class="container-wrapper">
@@ -96,9 +106,9 @@
                         <input type="file" id="file-input" name="files" multiple style="display: none;">
                         <button type="button" onclick="document.getElementById('file-input').click();">파일 선택</button>
                         <span id="file-name-display">선택된 파일 없음</span>
+                        <ul id="file-list" class="file-list"></ul>
                     </div>
                 </div>
-
                 <div class="button-group">
                     <button type="submit" class="submit-btn" id="submit-btn">작성하기</button>
                     <button type="button" class="temp-save-btn" id="temp-save-btn">임시저장</button>
@@ -108,7 +118,6 @@
     </main>
     <div th:replace="~{fragments/footer :: footer}"></div>
 </div>
-
 <!-- 1) Quill UMD (로컬) -->
 <script th:src="@{/js/vendor/quill.min.js}"></script>
 
